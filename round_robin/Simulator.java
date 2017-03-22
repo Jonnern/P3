@@ -167,8 +167,6 @@ public class Simulator
 			memory.processCompleted(p);
 			// Try to use the freed memory:
 			transferProcessFromMemToReady();
-			// Update statistics
-			p.updateStatistics(statistics);
 
 			// Check for more free memory
 			p =	 memory.checkMemory(clock);
@@ -193,10 +191,17 @@ public class Simulator
 	 */
 	private void endProcess() {
 		// TODO:  endProcess, correct?
+
+        /* Updating statistics and deallocating resources */
         Process process = cpu.getActiveProcess();
-        cpu.activeProcessLeft(clock);
-        memory.processCompleted(process);
-        process.updateStatistics(statistics);
+		memory.processCompleted(process);
+		process.updateStatistics(statistics);
+
+		/* Updating eventQueue if necessary */
+		Event event = cpu.activeProcessLeft(clock);
+		if(event != null){
+			eventQueue.insertEvent(event);
+		}
 	}
 
 	/**
@@ -206,11 +211,23 @@ public class Simulator
 	private void processIoRequest() {
 		// TODO:  processIoRequest, correct?
 
-        // Taking the CPU from the process and puts it in a IO queue
+        /* Taking the CPU from the process and puts it in a IO queue */
         Process process = cpu.getActiveProcess();
-        cpu.activeProcessLeft(clock);
-        io.addIoRequest(process, clock);
-	}
+        Event IoEvent = io.addIoRequest(process, clock);
+
+        /* Updating eventQueue if necessary */
+        if (IoEvent != null){
+            eventQueue.insertEvent(IoEvent);
+        }
+
+        /* CPU must know that the active process left */
+        Event event = cpu.activeProcessLeft(clock);
+
+        /* Updating eventQueue if necessary */
+        if (event != null){
+            eventQueue.insertEvent(event);
+        }
+    }
 
 	/**
 	 * Processes an event signifying that the process currently doing I/O
@@ -219,13 +236,26 @@ public class Simulator
 	private void endIoOperation() {
 		// TODO:  endIoOperation, correct?
 
-        // Freeing I/O and puts the process in the CPU queue
-        Process process = io.removeActiveProcess();
+        /*  Freeing I/O and puts the process in the CPU queue */
+        Process process = io.removeActiveProcess(clock);
         Event event = cpu.insertProcess(process, clock);
-        if(event != null){
+
+        /* Updating eventQueue if necessary */
+        if (event != null){
             eventQueue.insertEvent(event);
         }
-	}
+
+        /* Starting new I/O operation */
+        Event IoEvent = io.startIoOperation(clock);
+
+        /* Updating eventQueue if necessary */
+        if (IoEvent != null){
+            eventQueue.insertEvent(IoEvent);
+        }
+
+        // Updating statistics
+        statistics.nofProcessedIoOperations++;
+    }
 
 
 	/* The following methods are used by the GUI and should not be removed or modified. */

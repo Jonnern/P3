@@ -52,7 +52,7 @@ public class Process {
 		// Memory need varies from 100 kB to 25% of memory size
 		memoryNeeded = 100 + (long)(Math.random()*(memorySize/4-100));
 		// CPU time needed varies from 100 to 10000 milliseconds
-		cpuTimeNeeded = 100 + (long)(Math.random()*9900);
+		cpuTimeNeeded = 400 + (long)(Math.random()*9900);
 		// Average interval between I/O requests varies from 1% to 25% of CPU time needed
 		avgIoInterval = (1 + (long)(Math.random()*25))*cpuTimeNeeded/100;
 		// The first and latest event involving this process is its creation
@@ -74,28 +74,26 @@ public class Process {
     public void leftReadyQueue(long clock){
         timeSpentInReadyQueue += clock - timeOfLastEvent;
         timeOfLastEvent = clock;
+        nofTimesInReadyQueue++;
     }
 
     public void leftCpu(long clock){
         timeSpentInCpu += clock - timeOfLastEvent;
-        cpuTimeNeeded -= clock - timeOfLastEvent;
+        cpuTimeNeeded -= timeSpentInCpu;
         timeOfLastEvent = clock;
+        timeToNextIoOperation -= timeSpentInCpu;
     }
 
     public void leftIoQueue(long clock){
         timeSpentWaitingForIo += clock - timeOfLastEvent;
         timeOfLastEvent = clock;
+        nofTimesInIoQueue++;
     }
 
     public void leftIo(long clock){
         timeSpentInIo += clock - timeOfLastEvent;
-        timeOfNextIo = clock + avgIoInterval;
-        timeToNextIoOperation = calcuateTimeToNextIoOperation(clock);
+        timeToNextIoOperation = avgIoInterval;
         timeOfLastEvent = clock;
-    }
-
-    public long calcuateTimeToNextIoOperation(long clock){
-        return timeOfNextIo - clock;
     }
 
     public long getAvgIoInterval() {

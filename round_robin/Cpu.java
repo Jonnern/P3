@@ -58,16 +58,17 @@ public class Cpu {
     public Event switchProcess(long clock) {
         // TODO:  switchProcess, correct?
         if(!cpuQueue.isEmpty()){
-            // Active process is leaving CPU
+            /* Active process, if any, is put in the back of CpuQueue */
             if(activeProcess != null){
-                activeProcessLeft(clock);
+                activeProcess.leftCpu(clock);
+                cpuQueue.add(activeProcess);
             }
 
-            // First process in queue is activated
+            /* First process in queue is activated */
             activeProcess = cpuQueue.remove(0);
             activeProcess.leftReadyQueue(clock);
 
-            // Returning the event causing the process that was activated to leave the CPU
+            /* Returning the event causing the process that was activated to leave the CPU */
             return generateEvent(clock);
         }
         return null;
@@ -81,10 +82,6 @@ public class Cpu {
      */
     public Event activeProcessLeft(long clock) {
         // TODO: activeProcessLeft, correct?
-        Process leavingProcess = activeProcess;
-        leavingProcess.leftCpu(clock);
-        cpuQueue.add(leavingProcess);
-
         activeProcess = null;
         return switchProcess(clock);
     }
@@ -117,7 +114,7 @@ public class Cpu {
 
     private Event generateEvent(long clock){
         // Creating END Event if the activated process finishes this time quanta
-        if(activeProcess.getCpuTimeNeeded() < maxCpuTime && activeProcess.getTimeToNextIoOperation() < maxCpuTime){
+        if(activeProcess.getCpuTimeNeeded() < maxCpuTime && activeProcess.getCpuTimeNeeded() < activeProcess.getTimeToNextIoOperation()){
             return new Event(Event.END_PROCESS, clock + activeProcess.getCpuTimeNeeded());
         }
 

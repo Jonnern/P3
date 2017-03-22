@@ -1,6 +1,5 @@
 package round_robin;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -37,10 +36,10 @@ public class Io {
         // TODO: addIoRequest, correct?
         ioQueue.add(requestingProcess);
 
-        // Process left CPU
+        /* Process left CPU */
         requestingProcess.leftCpu(clock);
 
-        // Initiate I/O operation if device is free
+        /* Initiate I/O operation if device is free */
         if(activeProcess == null){
             return startIoOperation(clock);
         }
@@ -60,11 +59,8 @@ public class Io {
         if(activeProcess == null && !ioQueue.isEmpty()){
             activeProcess = ioQueue.remove(0);
 
-            // Active process left the IoQueue
+            /* Active process left the IoQueue */
             activeProcess.leftIoQueue(clock);
-
-            // Updating statistics
-            statistics.nofProcessedIoOperations++;
 
             return new Event(Event.END_IO, clock + avgIoTime);
         }
@@ -88,10 +84,12 @@ public class Io {
      * Removes the process currently doing I/O from the I/O device.
      * @return	The process that was doing I/O, or null if no process was doing I/O.
      */
-    public Process removeActiveProcess() {
+    public Process removeActiveProcess(long clock) {
         // TODO:  removeActiveProcess, correct?
         Process prevProcess = activeProcess;
         activeProcess = null;
+
+        prevProcess.leftIo(clock);
         return prevProcess;
     }
 
