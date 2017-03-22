@@ -18,6 +18,8 @@ public class Process {
     private long cpuTimeNeeded;
 	/** The average time between the need for I/O operations for this process */
     private long avgIoInterval;
+    /** The time this process needs I/O */
+    private long timeOfNextIo;
 	/** The time left until the next time this process needs I/O */
     private long timeToNextIoOperation = 0;
 
@@ -76,6 +78,7 @@ public class Process {
 
     public void leftCpu(long clock){
         timeSpentInCpu += clock - timeOfLastEvent;
+        cpuTimeNeeded -= clock - timeOfLastEvent;
         timeOfLastEvent = clock;
     }
 
@@ -86,7 +89,25 @@ public class Process {
 
     public void leftIo(long clock){
         timeSpentInIo += clock - timeOfLastEvent;
+        timeOfNextIo = clock + avgIoInterval;
+        timeToNextIoOperation = calcuateTimeToNextIoOperation(clock);
         timeOfLastEvent = clock;
+    }
+
+    public long calcuateTimeToNextIoOperation(long clock){
+        return timeOfNextIo - clock;
+    }
+
+    public long getAvgIoInterval() {
+        return avgIoInterval;
+    }
+
+    public long getTimeToNextIoOperation(){
+        return timeToNextIoOperation;
+    }
+
+    public long getCpuTimeNeeded(){
+        return cpuTimeNeeded;
     }
 
     // TODO: Add more methods as needed

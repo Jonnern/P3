@@ -179,15 +179,24 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// TODO:  switchProcess
-        getCpu().switchProcess(clock);
+		// TODO:  switchProcess, correct?
+        Event event = getCpu().switchProcess(clock);
+
+        // Also add new events to the event queue if needed
+        if(event != null){
+            eventQueue.insertEvent(event);
+        }
 	}
 
 	/**
-	 * Ends the active process, and deallocates any resources allocated to it.
+	 * Ends the active process, and deallocate any resources allocated to it.
 	 */
 	private void endProcess() {
-		// TODO:  endProcess
+		// TODO:  endProcess, correct?
+        Process process = cpu.getActiveProcess();
+        cpu.activeProcessLeft(clock);
+        memory.processCompleted(process);
+        process.updateStatistics(statistics);
 	}
 
 	/**
@@ -195,8 +204,12 @@ public class Simulator
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// TODO:  processIoRequest
-        getCpu().getActiveProcess().
+		// TODO:  processIoRequest, correct?
+
+        // Taking the CPU from the process and puts it in a IO queue
+        Process process = cpu.getActiveProcess();
+        cpu.activeProcessLeft(clock);
+        io.addIoRequest(process, clock);
 	}
 
 	/**
@@ -204,7 +217,14 @@ public class Simulator
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// TODO:  endIoOperation
+		// TODO:  endIoOperation, correct?
+
+        // Freeing I/O and puts the process in the CPU queue
+        Process process = io.removeActiveProcess();
+        Event event = cpu.insertProcess(process, clock);
+        if(event != null){
+            eventQueue.insertEvent(event);
+        }
 	}
 
 
