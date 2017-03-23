@@ -1,0 +1,1 @@
+Ikke ta -= timeSpentInCpu!!!
