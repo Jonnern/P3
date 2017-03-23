@@ -1,1 +1,1 @@
-Ikke ta -= timeSpentInCpu!!!
+Works pretty good
