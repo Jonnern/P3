@@ -78,7 +78,7 @@ public class Process {
     }
 
     public void leftCpu(long clock){
-        timeSpentInCpu += clock - timeOfLastEvent;
+        timeSpentInCpu = clock - timeOfLastEvent;
         cpuTimeNeeded -= timeSpentInCpu;
         timeOfLastEvent = clock;
         timeToNextIoOperation -= timeSpentInCpu;

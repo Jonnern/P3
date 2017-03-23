@@ -14,7 +14,7 @@ public class Memory {
 	/** The amount of memory in the memory device */
 	private long memorySize;
 	/** The amount of free memory in the memory device */
-	private long freeMemory;
+	public long freeMemory;
 
 	/**
 	 * Creates a new memory device with the given parameters.

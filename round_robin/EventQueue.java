@@ -40,7 +40,7 @@ public class EventQueue
 	 * @return	The event with the lowest time value in the queue.
 	 */
     public Event getNextEvent() {
-		  return (Event)events.remove(0);
+		  return events.remove(0);
     }
 
     /**

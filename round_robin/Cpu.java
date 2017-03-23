@@ -37,11 +37,8 @@ public class Cpu {
         // TODO: insertProcess, correct?
         cpuQueue.add(p);
 
-        // Process left memory queue
-        p.leftMemoryQueue(clock);
-
         // Switching process if the CPU is idle
-        if(getActiveProcess() == null){
+        if(this.getActiveProcess() == null){
             return switchProcess(clock);
         }
         return null;
@@ -65,12 +62,20 @@ public class Cpu {
             }
 
             /* First process in queue is activated */
-            activeProcess = cpuQueue.remove(0);
+            activeProcess = cpuQueue.remove();
             activeProcess.leftReadyQueue(clock);
 
             /* Returning the event causing the process that was activated to leave the CPU */
             return generateEvent(clock);
         }
+
+        /* If the queue is empty and a process was active, reactivate it */
+        if (activeProcess != null){
+            activeProcess.leftCpu(clock);
+            /* Returning the event causing the process that was activated to leave the CPU */
+            return generateEvent(clock);
+        }
+
         return null;
     }
 
@@ -82,6 +87,7 @@ public class Cpu {
      */
     public Event activeProcessLeft(long clock) {
         // TODO: activeProcessLeft, correct?
+        //activeProcess.leftCpu(clock);
         activeProcess = null;
         return switchProcess(clock);
     }

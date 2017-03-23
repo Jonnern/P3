@@ -114,7 +114,7 @@ public class Simulator
 	private void processEvent(Event event) {
 		switch (event.getType()) {
 			case Event.NEW_PROCESS:
-				createProcess();
+                createProcess();
 				break;
 			case Event.SWITCH_PROCESS:
 				switchProcess();
@@ -137,11 +137,13 @@ public class Simulator
 	private void createProcess() {
 		// Create a new process
 		Process newProcess = new Process(memory.getMemorySize(), clock);
-		memory.insertProcess(newProcess);
+        memory.insertProcess(newProcess);
 		transferProcessFromMemToReady();
+
 		// Add an event for the next process arrival
 		long nextArrivalTime = clock + 1 + (long)(2*Math.random()*avgArrivalInterval);
 		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, nextArrivalTime));
+
 		// Update statistics
 		statistics.nofCreatedProcesses++;
     }
@@ -162,14 +164,11 @@ public class Simulator
                 eventQueue.insertEvent(event);
             }
 
-			// Since we haven't implemented the CPU and I/O device yet,
-			// we let the process leave the system immediately, for now.
-			memory.processCompleted(p);
-			// Try to use the freed memory:
-			transferProcessFromMemToReady();
-
 			// Check for more free memory
 			p =	 memory.checkMemory(clock);
+
+            // Try to use the freed memory:
+            //transferProcessFromMemToReady();
 		}
 	}
 

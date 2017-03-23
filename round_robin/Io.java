@@ -41,7 +41,7 @@ public class Io {
 
         /* Initiate I/O operation if device is free */
         if(activeProcess == null){
-            return startIoOperation(clock);
+            return startIoOperation(clock+requestingProcess.getTimeToNextIoOperation());
         }
 
         return null;
