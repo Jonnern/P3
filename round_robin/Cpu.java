@@ -34,7 +34,6 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event insertProcess(Process p, long clock) {
-        // TODO: insertProcess, correct?
         cpuQueue.add(p);
 
         // Switching process if the CPU is idle
@@ -53,7 +52,6 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event switchProcess(long clock) {
-        // TODO:  switchProcess, correct?
         if(!cpuQueue.isEmpty()){
             /* Active process, if any, is put in the back of CpuQueue */
             if(activeProcess != null){
@@ -86,7 +84,6 @@ public class Cpu {
      *			process was switched in.
      */
     public Event activeProcessLeft(long clock) {
-        // TODO: activeProcessLeft, correct?
         //activeProcess.leftCpu(clock);
         activeProcess = null;
         return switchProcess(clock);
@@ -105,8 +102,6 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-        // TODO: timePassed, correct? Maybe need more
-
         // Updating statistics if the current queue is longer than the historical largest
         if(cpuQueue.size() > statistics.cpuQueueLargestLength){
             statistics.cpuQueueLargestLength = cpuQueue.size();
@@ -116,6 +111,9 @@ public class Cpu {
         if(activeProcess != null){
             statistics.totalBusyCpuTime += timePassed;
         }
+
+        // Updating time weighted queue length
+        statistics.cpuQueueLengthTime += cpuQueue.size()*timePassed;
     }
 
     private Event generateEvent(long clock){

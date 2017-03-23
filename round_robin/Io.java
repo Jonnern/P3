@@ -33,7 +33,6 @@ public class Io {
      *							if no operation was initiated.
      */
     public Event addIoRequest(Process requestingProcess, long clock) {
-        // TODO: addIoRequest, correct?
         ioQueue.add(requestingProcess);
 
         /* Process left CPU */
@@ -55,7 +54,6 @@ public class Io {
      *					or null	if no operation was initiated.
      */
     public Event startIoOperation(long clock) {
-        // TODO:  startIoOperation, correct?
         if(activeProcess == null && !ioQueue.isEmpty()){
             activeProcess = ioQueue.remove(0);
 
@@ -72,12 +70,13 @@ public class Io {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-        // TODO:  timePassed, correct?
-
         // Updating statistics if the current queue is longer than the historical largest
         if(ioQueue.size() > statistics.ioQueueLargestLength){
             statistics.ioQueueLargestLength = ioQueue.size();
         }
+
+        // Updating time weighted queue length
+        statistics.ioQueueLengthTime += ioQueue.size()*timePassed;
     }
 
     /**
@@ -85,7 +84,6 @@ public class Io {
      * @return	The process that was doing I/O, or null if no process was doing I/O.
      */
     public Process removeActiveProcess(long clock) {
-        // TODO:  removeActiveProcess, correct?
         Process prevProcess = activeProcess;
         activeProcess = null;
 

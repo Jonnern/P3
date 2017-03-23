@@ -67,37 +67,50 @@ public class Process {
      * @param clock The time when the process leaves the memory queue.
      */
     public void leftMemoryQueue(long clock) {
-		  timeSpentWaitingForMemory += clock - timeOfLastEvent;
-		  timeOfLastEvent = clock;
+        // Updating time waiting for memory
+        timeSpentWaitingForMemory += clock - timeOfLastEvent;
+
+        timeOfLastEvent = clock;
     }
 
     public void leftReadyQueue(long clock){
+        // Updating time in ready queue
         timeSpentInReadyQueue += clock - timeOfLastEvent;
-        timeOfLastEvent = clock;
+        // Number of times in ready queue
         nofTimesInReadyQueue++;
+
+        timeOfLastEvent = clock;
     }
 
     public void leftCpu(long clock){
-        timeSpentInCpu = clock - timeOfLastEvent;
-        cpuTimeNeeded -= timeSpentInCpu;
+        // CPU time this turn
+        long cpuTurnTime = clock - timeOfLastEvent;
+        // Updating time spent in CPU
+        timeSpentInCpu += cpuTurnTime;
+        // Remaining CPU time needed
+        cpuTimeNeeded -= cpuTurnTime;
+        // Updating time until next IO Operation
+        timeToNextIoOperation -= cpuTurnTime;
+
         timeOfLastEvent = clock;
-        timeToNextIoOperation -= timeSpentInCpu;
     }
 
     public void leftIoQueue(long clock){
+        // Updating time in IoQueue
         timeSpentWaitingForIo += clock - timeOfLastEvent;
-        timeOfLastEvent = clock;
+        // Number of times in IoQueue
         nofTimesInIoQueue++;
+
+        timeOfLastEvent = clock;
     }
 
     public void leftIo(long clock){
+        // Total time in IO
         timeSpentInIo += clock - timeOfLastEvent;
+        // Updating time to next I/O Operation
         timeToNextIoOperation = avgIoInterval;
-        timeOfLastEvent = clock;
-    }
 
-    public long getAvgIoInterval() {
-        return avgIoInterval;
+        timeOfLastEvent = clock;
     }
 
     public long getTimeToNextIoOperation(){
@@ -107,8 +120,6 @@ public class Process {
     public long getCpuTimeNeeded(){
         return cpuTimeNeeded;
     }
-
-    // TODO: Add more methods as needed
 
     /**
 	 * Returns the amount of memory needed by this process.

@@ -70,6 +70,8 @@ public class Simulator
 		System.out.print("Simulating...");
 		// Genererate the first process arrival event
 		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 0));
+		// Update statistics
+		statistics.nofCreatedProcesses++;
 		// Process events until the simulation length is exceeded:
 		while (clock < simulationLength && !eventQueue.isEmpty()) {
 			// Find the next event
@@ -176,8 +178,10 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// TODO:  switchProcess, correct?
         Event event = getCpu().switchProcess(clock);
+
+        // Updating number of times a process has been switched out by using the full time quanta
+        statistics.nofProcessSwitches++;
 
         // Also add new events to the event queue if needed
         if(event != null){
@@ -189,8 +193,6 @@ public class Simulator
 	 * Ends the active process, and deallocate any resources allocated to it.
 	 */
 	private void endProcess() {
-		// TODO:  endProcess, correct?
-
         /* Updating statistics and deallocating resources */
         Process process = cpu.getActiveProcess();
 		memory.processCompleted(process);
@@ -208,8 +210,6 @@ public class Simulator
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// TODO:  processIoRequest, correct?
-
         /* Taking the CPU from the process and puts it in a IO queue */
         Process process = cpu.getActiveProcess();
         Event IoEvent = io.addIoRequest(process, clock);
@@ -233,8 +233,6 @@ public class Simulator
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// TODO:  endIoOperation, correct?
-
         /*  Freeing I/O and puts the process in the CPU queue */
         Process process = io.removeActiveProcess(clock);
         Event event = cpu.insertProcess(process, clock);
